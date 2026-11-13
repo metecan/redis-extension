@@ -5,6 +5,10 @@ right-hand sidebar in Muxy. It finds the Redis servers in your Docker
 containers and in your project's `.env`, and works with Valkey, KeyDB, and
 Dragonfly too.
 
+![The Redis sidebar: keys grouped into folders with live TTLs, and a hash open with a JSON field expanded](screenshots/screenshot-1.png)
+
+![The Server tab with live ops, memory, clients, and network charts, next to the console](screenshots/screenshot-2.png)
+
 ## Use it
 
 Click the Redis mark in the top bar, or run **Redis: Toggle Sidebar** from the

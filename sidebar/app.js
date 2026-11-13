@@ -46,8 +46,8 @@ function btn(ic, action, title, data = {}, { disabled = false, cls = "" } = {}) 
   return `<button class="icon-btn ${cls}" data-action="${action}" title="${esc(title)}" aria-label="${esc(title)}"${attrs(data)}${disabled ? " disabled" : ""}>${icon(ic)}</button>`;
 }
 
-function abtn(ic, action, label, { disabled = false, cls = "", data = {} } = {}) {
-  return `<button class="action-btn ${cls}" data-action="${action}" title="${esc(label)}"${attrs(data)}${disabled ? " disabled" : ""}>${icon(ic)}<span>${esc(label)}</span></button>`;
+function abtn(ic, action, label, { disabled = false, cls = "", data = {}, title = label } = {}) {
+  return `<button class="action-btn ${cls}" data-action="${action}" title="${esc(title)}"${attrs(data)}${disabled ? " disabled" : ""}>${icon(ic)}<span>${esc(label)}</span></button>`;
 }
 
 const spinner = (label) => `<span class="busy-inline" title="${esc(label)}"><span class="spin"></span></span>`;
@@ -2401,7 +2401,7 @@ function keyChromeHtml(d) {
         addLabel ? abtn("plus", "k-add", addLabel, { disabled: !data }) : d.type === "string" || d.type === "ReJSON-RL" ? abtn("pencil", "k-edit", "Edit", { disabled: !canEdit }) : "",
         abtn("clock", "k-ttl", "Expiry"),
         abtn("tag", "k-rename", "Rename", { disabled: d.key instanceof Uint8Array }),
-        abtn("copy", "k-copy", "Copy Name"),
+        abtn("copy", "k-copy", "Copy", { title: "Copy the key name" }),
         abtn("trash", "k-delete", "Delete", { cls: "danger" }),
       ].join("");
   const name = d.renaming
