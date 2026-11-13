@@ -1863,7 +1863,7 @@ function setView(v) {
   }
   if (v === "console") {
     scrollConsole();
-    setTimeout(() => $("#console-in").focus(), 0);
+    setTimeout(() => $("#console-in").focus({ preventScroll: true }), 0);
   }
 }
 
@@ -1941,7 +1941,7 @@ function renderList() {
   const changed = setHtml(el, html);
   if (changed) {
     const auto = el.querySelector("[data-autofocus]");
-    if (auto && !el.contains(document.activeElement)) setTimeout(() => auto.focus(), 0);
+    if (auto && !el.contains(document.activeElement)) setTimeout(() => auto.focus({ preventScroll: true }), 0);
   }
   applyTtls();
 }
@@ -2361,7 +2361,7 @@ function renderDetailChrome() {
   const changed = setHtml(host, html);
   if (changed && d.renaming) {
     const input = $("#rename-in");
-    input?.focus();
+    input?.focus({ preventScroll: true });
     input?.select();
   }
   applyTtls();
@@ -2449,7 +2449,7 @@ function renderDetailBody({ force = false } = {}) {
   body._html = html;
   const auto = body.querySelector("[data-autofocus]");
   if (auto) {
-    auto.focus();
+    auto.focus({ preventScroll: true });
     if (auto.tagName === "TEXTAREA") auto.setSelectionRange(0, 0);
   }
   for (const ta of body.querySelectorAll("textarea.grow")) autosize(ta);
@@ -2951,12 +2951,12 @@ function handleAction(action, el) {
     case "console-clear":
       state.console.entries = [];
       renderList();
-      return $("#console-in").focus();
+      return $("#console-in").focus({ preventScroll: true });
     case "console-recent": {
       const input = $("#console-in");
       input.value = state.console.history[Number(el.dataset.i)] || "";
       autosize(input);
-      return input.focus();
+      return input.focus({ preventScroll: true });
     }
     case "open-cli":
       return openCli();
@@ -3065,16 +3065,16 @@ function bindEvents() {
       const items = [...document.querySelectorAll("#menu .menu-item:not([disabled])")];
       const i = items.indexOf(document.activeElement);
       const next = i < 0 ? items[e.key === "ArrowDown" ? 0 : items.length - 1] : items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length];
-      next?.focus();
+      next?.focus({ preventScroll: true });
       e.preventDefault();
       return;
     }
     if ((e.metaKey && e.key === "f") || (!typing && e.key === "/")) {
       e.preventDefault();
-      if (d?.kind === "key" && $("#d-q")) return $("#d-q").focus();
+      if (d?.kind === "key" && $("#d-q")) return $("#d-q").focus({ preventScroll: true });
       if (d) closeDetail();
       if (state.view !== "keys") setView("keys");
-      $("#filter").focus();
+      $("#filter").focus({ preventScroll: true });
       $("#filter").select();
       return;
     }
@@ -3109,6 +3109,11 @@ function bindEvents() {
   });
 
   $("#list").addEventListener("scroll", closeMenu, { passive: true });
+  // The page itself never scrolls. Focusing a field in the detail pane while it
+  // slides in would otherwise shift everything sideways and leave it there.
+  window.addEventListener("scroll", () => {
+    if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+  });
   window.addEventListener("blur", closeMenu);
   window.addEventListener("resize", closeMenu);
   document.addEventListener("visibilitychange", () => {
